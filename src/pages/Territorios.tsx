@@ -1,10 +1,17 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Plus, Search, Settings, Users, AlertTriangle } from 'lucide-react';
+import { MapPin, Plus, Search, Settings, Users, AlertTriangle, X } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface Territorio {
   id: number;
@@ -63,12 +70,25 @@ const territorios: Territorio[] = [
 export const Territorios = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTipo, setSelectedTipo] = useState<string>('all');
+  const [showAddDialog, setShowAddDialog] = useState(false);
+  const [newTerritorio, setNewTerritorio] = useState({
+    nombre: '',
+    tipo: 'region' as 'region' | 'provincia' | 'comuna',
+    poblacion: 0
+  });
 
   const filteredTerritorios = territorios.filter(territorio => {
     const matchesSearch = territorio.nombre.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesTipo = selectedTipo === 'all' || territorio.tipo === selectedTipo;
     return matchesSearch && matchesTipo;
   });
+
+  const handleAddTerritorio = () => {
+    console.log('Agregando territorio:', newTerritorio);
+    // Aquí iría la lógica para agregar el territorio
+    setShowAddDialog(false);
+    setNewTerritorio({ nombre: '', tipo: 'region', poblacion: 0 });
+  };
 
   const getRiskColor = (nivel: string) => {
     switch (nivel) {
@@ -100,10 +120,63 @@ export const Territorios = () => {
               Configure y monitoree territorios para el sistema de alerta temprana
             </p>
           </div>
-          <Button className="bg-blue-600 hover:bg-blue-700">
-            <Plus className="h-4 w-4 mr-2" />
-            Agregar Territorio
-          </Button>
+          <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
+            <DialogTrigger asChild>
+              <Button className="bg-blue-600 hover:bg-blue-700">
+                <Plus className="h-4 w-4 mr-2" />
+                Agregar Territorio
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Agregar Nuevo Territorio</DialogTitle>
+                <DialogDescription>
+                  Complete la información del nuevo territorio a agregar al sistema.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium">Nombre del Territorio</label>
+                  <Input
+                    value={newTerritorio.nombre}
+                    onChange={(e) => setNewTerritorio({...newTerritorio, nombre: e.target.value})}
+                    placeholder="Ej: Región de Tarapacá"
+                    className="mt-1"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium">Tipo</label>
+                  <select 
+                    value={newTerritorio.tipo}
+                    onChange={(e) => setNewTerritorio({...newTerritorio, tipo: e.target.value as 'region' | 'provincia' | 'comuna'})}
+                    className="w-full mt-1 p-2 border rounded-md"
+                  >
+                    <option value="region">Región</option>
+                    <option value="provincia">Provincia</option>
+                    <option value="comuna">Comuna</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="text-sm font-medium">Población</label>
+                  <Input
+                    type="number"
+                    value={newTerritorio.poblacion}
+                    onChange={(e) => setNewTerritorio({...newTerritorio, poblacion: parseInt(e.target.value) || 0})}
+                    placeholder="0"
+                    className="mt-1"
+                  />
+                </div>
+                <div className="flex justify-end space-x-2 pt-4">
+                  <Button variant="outline" onClick={() => setShowAddDialog(false)}>
+                    Cancelar
+                  </Button>
+                  <Button onClick={handleAddTerritorio} className="bg-blue-600 hover:bg-blue-700">
+                    Agregar
+                  </Button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
 

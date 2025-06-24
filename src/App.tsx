@@ -8,6 +8,7 @@ import { Layout } from "./components/Layout";
 import { Dashboard } from "./pages/Dashboard";
 import { Territorios } from "./pages/Territorios";
 import { FuentesDatos } from "./pages/FuentesDatos";
+import { Indicadores } from "./pages/Indicadores";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,8 +24,8 @@ const App = () => (
             <Route index element={<Dashboard />} />
             <Route path="territorios" element={<Territorios />} />
             <Route path="fuentes" element={<FuentesDatos />} />
+            <Route path="indicadores" element={<Indicadores />} />
             <Route path="mapa" element={<Dashboard />} />
-            <Route path="indicadores" element={<Dashboard />} />
             <Route path="alertas" element={<Dashboard />} />
             <Route path="reportes" element={<Dashboard />} />
             <Route path="configuracion" element={<Dashboard />} />
